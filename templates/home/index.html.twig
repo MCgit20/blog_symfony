@@ -1,20 +1,36 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Accueil - Mon Blog{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Applications/MAMP/htdocs/mini-blog/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>/Applications/MAMP/htdocs/mini-blog/templates/home/index.html.twig</code></li>
-    </ul>
+    <div class="jumbotron bg-light p-5 rounded-3 mb-4">
+        <h1 class="display-4">Bienvenue sur Mon Blog ! 🌟</h1>
+        <p class="lead">Découvre les derniers articles sur la technologie et bien plus encore.</p>
+    </div>
+    <h2 class="mb-4">Derniers Articles</h2>
+    {% if posts is empty %}
+        <div class="alert alert-info">
+            Aucun article publié pour le moment. Revenez bientôt !
+        </div>
+    {% else %}
+        <div class="row">
+                    {% for post in posts %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if post.picture %}
+                            <img src="{{ asset('uploads/' ~ post.picture) }}" class="card-img-top" alt="{{ post.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content|slice(0, 150) }}...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ post.publishedAt|date('d/m/Y') }}</small>
+                                <a href="{{ path('post_show', {'id': post.id}) }}" class="btn btn-sm btn-primary">Lire plus</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
 </div>
+{% endif %}
 {% endblock %}

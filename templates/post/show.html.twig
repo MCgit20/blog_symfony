@@ -1,38 +1,58 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Post{% endblock %}
+{% block title %}{{ post.title }}{% endblock %}
 
 {% block body %}
-    <h1>Post</h1>
+    <article>
+        <h1 class="mb-3">{{ post.title }}</h1>
+        <div class="text-muted mb-4">
+            Publié le {{ post.publishedAt|date('d/m/Y à H:i') }}
+            par {{ post.author.fistName }} {{ post.author.lastName }}
+            dans <span class="badge bg-secondary">{{ post.category.name }}</span>
+        </div>
+        {% if post.picture %}
+            <img src="{{ asset('uploads/' ~ post.picture) }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
+        {% endif %}
+        <div class="content">
+            {{ post.content|nl2br }}
+        </div>
+    </article>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ post.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ post.title }}</td>
-            </tr>
-            <tr>
-                <th>Content</th>
-                <td>{{ post.content }}</td>
-            </tr>
-            <tr>
-                <th>PublishedAt</th>
-                <td>{{ post.publishedAt ? post.publishedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Picture</th>
-                <td>{{ post.picture }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <hr class="my-5">
 
-    <a href="{{ path('app_post_index') }}">back to list</a>
+    <!-- Section Commentaires -->
+    <section class="comments">
+        <h3 class="mb-4">Commentaires ({{ post.comments|length }})</h3>
 
-    <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
+        {% if is_granted('ROLE_USER') %}
+            <!-- Formulaire d'ajout de commentaire -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    {{ form_start(commentForm) }}
+                    {{ form_row(commentForm.content, {'attr': {'class': 'form-control', 'rows': 3}}) }}
+                    <button type="submit" class="btn btn-primary">Ajouter un commentaire</button>
+                    {{ form_end(commentForm) }}
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <a href="{{ path('app_login') }}">Connectez-vous</a> pour ajouter un commentaire.
+            </div>
+        {% endif %}
 
-    {{ include('post/_delete_form.html.twig') }}
+        <!-- Liste des commentaires -->
+        {% for comment in post.comments %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ comment.author.fistName }} {{ comment.author.lastName }}</strong>
+                        <small class="text-muted">{{ comment.createdAt|date('d/m/Y à H:i') }}</small>
+                    </div>
+                    <p class="mt-2">{{ comment.content }}</p>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted">Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+        {% endfor %}
+    </section>
 {% endblock %}

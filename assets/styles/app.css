@@ -1,1 +1,47 @@
+/* Variables personnalisées */
+:root {
+--primary-color: #2E75B6;
+--secondary-color: #4472C4;
+--accent-color: #059669;
+}
 
+/* Styles généraux */
+body {
+font-family: 'Arial', sans-serif;
+background-color: #f8f9fa;
+}
+
+.card {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+transform: translateY(-5px);
+box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+height: 200px;
+object-fit: cover;
+}
+
+.navbar-brand {
+font-size: 1.5rem;
+font-weight: bold;
+}
+
+.jumbotron {
+background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-
+color) 100%);
+color: white;
+}
+
+.btn-primary {
+background-color: var(--primary-color);
+border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+background-color: var(--secondary-color);
+border-color: var(--secondary-color);
+}
