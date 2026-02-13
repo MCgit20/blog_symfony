@@ -80,4 +80,28 @@ final class CommentController extends AbstractController
 
         return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/{id}/approve', name: 'app_comment_approve', methods: ['POST'])]
+    public function approve(Request $request, Comment $comment, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('approve'.$comment->getId(), $request->getPayload()->getString('_token'))) {
+            $comment->setIsApproved(true);
+            $entityManager->flush();
+            $this->addFlash('success', 'Commentaire approuvé avec succès !');
+        }
+
+        return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/disapprove', name: 'app_comment_disapprove', methods: ['POST'])]
+    public function disapprove(Request $request, Comment $comment, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('disapprove'.$comment->getId(), $request->getPayload()->getString('_token'))) {
+            $comment->setIsApproved(false);
+            $entityManager->flush();
+            $this->addFlash('warning', 'Commentaire désapprouvé.');
+        }
+
+        return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
+    }
 }

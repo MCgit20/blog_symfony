@@ -53,13 +53,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Post::class)]
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Post::class, cascade: ['remove'])]
     private Collection $posts;
 
     /**
      * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author')]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author', cascade: ['remove'])]
     private Collection $comments;
 
     public function __construct()

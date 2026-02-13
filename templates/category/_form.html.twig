@@ -1,4 +1,12 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {% for field in form.children %}
+        {% if field.vars.name != '_token' %}
+            <div class="form-group mb-3">
+                {{ form_label(field, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(field, {'attr': {'class': 'text-danger mt-2'}}) }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    <button type="submit" class="btn btn-lg btn-primary w-100">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form, {'render_rest': false}) }}

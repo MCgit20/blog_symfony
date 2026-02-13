@@ -1,37 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Category index{% endblock %}
+{% block title %}Gestion des Catégories{% endblock %}
 
 {% block body %}
-    <h1>Category index</h1>
+    <div class="container mt-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="h2 mb-0">📂 Gestion des Catégories</h1>
+                    <a href="{{ path('app_category_new') }}" class="btn btn-lg btn-success">➕ Créer une catégorie</a>
+                </div>
+            </div>
+        </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for category in categories %}
-            <tr>
-                <td>{{ category.id }}</td>
-                <td>{{ category.name }}</td>
-                <td>{{ category.description }}</td>
-                <td>
-                    <a href="{{ path('app_category_show', {'id': category.id}) }}">show</a>
-                    <a href="{{ path('app_category_edit', {'id': category.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_category_new') }}">Create new</a>
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-hover table-white">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for category in categories %}
+                            <tr>
+                                <td><span class="badge bg-secondary">{{ category.id }}</span></td>
+                                <td><strong>{{ category.name }}</strong></td>
+                                <td>{{ category.description|slice(0, 40) }}{% if category.description|length > 40 %}...{% endif %}</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ path('app_category_show', {'id': category.id}) }}" class="btn btn-sm btn-info">👁️ Voir</a>
+                                        <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-sm btn-warning">✏️ Éditer</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Aucune catégorie trouvée</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

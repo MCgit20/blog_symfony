@@ -3,56 +3,92 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block body %}
-    <article>
-        <h1 class="mb-3">{{ post.title }}</h1>
-        <div class="text-muted mb-4">
-            Publié le {{ post.publishedAt|date('d/m/Y à H:i') }}
-            par {{ post.author.fistName }} {{ post.author.lastName }}
-            dans <span class="badge bg-secondary">{{ post.category.name }}</span>
-        </div>
-        {% if post.picture %}
-            <img src="{{ asset('uploads/' ~ post.picture) }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
-        {% endif %}
-        <div class="content">
-            {{ post.content|nl2br }}
-        </div>
-    </article>
-
-    <hr class="my-5">
-
-    <!-- Section Commentaires -->
-    <section class="comments">
-        <h3 class="mb-4">Commentaires ({{ post.comments|length }})</h3>
-
-        {% if is_granted('ROLE_USER') %}
-            <!-- Formulaire d'ajout de commentaire -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    {{ form_start(commentForm) }}
-                    {{ form_row(commentForm.content, {'attr': {'class': 'form-control', 'rows': 3}}) }}
-                    <button type="submit" class="btn btn-primary">Ajouter un commentaire</button>
-                    {{ form_end(commentForm) }}
-                </div>
-            </div>
-        {% else %}
-            <div class="alert alert-info">
-                <a href="{{ path('app_login') }}">Connectez-vous</a> pour ajouter un commentaire.
-            </div>
-        {% endif %}
-
-        <!-- Liste des commentaires -->
-        {% for comment in post.comments %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <strong>{{ comment.author.fistName }} {{ comment.author.lastName }}</strong>
-                        <small class="text-muted">{{ comment.createdAt|date('d/m/Y à H:i') }}</small>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Article Principal -->
+                <article class="card shadow mb-5">
+                    <div class="card-body p-5">
+                        <h1 class="h2 mb-3">{{ post.title }}</h1>
+                        <div class="text-muted small mb-4">
+                            <strong>Publié le</strong> {{ post.publishedAt|date('d/m/Y à H:i') }} 
+                            <strong>par</strong> {{ post.author.fistName }} {{ post.author.lastName }}
+                            <span class="ms-2"><span class="badge bg-primary">{{ post.category.name }}</span></span>
+                        </div>
+                        {% if post.picture %}
+                            <img src="{{ asset('uploads/' ~ post.picture) }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
+                        {% endif %}
+                        <div class="content lh-lg">
+                            {{ post.content|nl2br }}
+                        </div>
                     </div>
-                    <p class="mt-2">{{ comment.content }}</p>
+                </article>
+
+                <!-- Section Commentaires -->
+                <section class="comments">
+                    {% set approvedComments = [] %}
+                    {% for comment in post.comments %}
+                        {% if comment.isIsApproved %}
+                            {% set approvedComments = approvedComments|merge([comment]) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    <h3 class="h4 mb-4">💬 Commentaires ({{ approvedComments|length }})</h3>
+
+                    {% if is_granted('ROLE_USER') %}
+                        <!-- Formulaire d'ajout de commentaire -->
+                        <div class="card shadow mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="card-title mb-3">Ajouter un commentaire</h5>
+                                <div class="alert alert-info" role="alert">
+                                    ℹ️ Votre commentaire sera publié après approbation par un administrateur.
+                                </div>
+                                {{ form_start(commentForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                                <div class="mb-3">
+                                    {{ form_widget(commentForm.content, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Votre commentaire...'}}) }}
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg">✍️ Publier</button>
+                                {{ form_end(commentForm) }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <strong>Vous n'êtes pas connecté</strong><br>
+                            <a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-info mt-2">Connectez-vous</a> pour ajouter un commentaire.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+
+                    <!-- Liste des commentaires approuvés -->
+                    {% if approvedComments|length > 0 %}
+                        {% for comment in approvedComments %}
+                            <div class="card mb-3 border-left border-primary" style="border-left-width: 4px;">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <strong class="text-dark">{{ comment.author.fistName }} {{ comment.author.lastName }}</strong>
+                                            {% if comment.author == post.author %}
+                                                <span class="badge bg-success ms-2">Auteur</span>
+                                            {% endif %}
+                                        </div>
+                                        <small class="text-muted">{{ comment.createdAt|date('d/m/Y à H:i') }}</small>
+                                    </div>
+                                    <p class="mb-0 text-muted">{{ comment.content }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="alert alert-light border text-center py-5">
+                            <p class="text-muted mb-0">Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+                        </div>
+                    {% endif %}
+                </section>
+
+                <!-- Retour -->
+                <div class="mt-5 text-center">
+                    <a href="{{ path('app_home') }}" class="btn btn-secondary btn-lg">⬅️ Retour à l'accueil</a>
                 </div>
             </div>
-        {% else %}
-            <p class="text-muted">Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
-        {% endfor %}
-    </section>
+        </div>
+    </div>
 {% endblock %}

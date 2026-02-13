@@ -28,6 +28,9 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private ?Post $post = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isApproved = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -77,6 +80,18 @@ class Comment
     public function setPost(?Post $post): static
     {
         $this->post = $post;
+
+        return $this;
+    }
+
+    public function isIsApproved(): bool
+    {
+        return $this->isApproved;
+    }
+
+    public function setIsApproved(bool $isApproved): static
+    {
+        $this->isApproved = $isApproved;
 
         return $this;
     }

@@ -21,6 +21,7 @@
                             <a class="nav-link" href="{{ path('app_post_index') }}">📝 Articles (Admin)</a>
                             <a class="nav-link" href="{{ path('app_user_index') }}">👥 Utilisateurs</a>
                             <a class="nav-link" href="{{ path('app_category_index') }}">📂 Catégories</a>
+                            <a class="nav-link" href="{{ path('app_comment_index') }}">💬 Commentaires</a>
                         {% endif %}
                         {% if is_granted('ROLE_USER') %}
                             <a class="nav-link" href="{{ path('app_logout')}}">Déconnexion</a>
